@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 couleurs = {
     0: "black",
-    1: "brown",
+    1: "brown", 
+    
     2: "red",
     3: "orange",
     4: "yellow",
