@@ -247,7 +247,146 @@ def schema_parallele(R1, R2, R3, Req):
 
     return fig
 
+def schema_mixte1(R1, R2, R3, Req):
 
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Branche supérieure
+    ax.plot([0, 1], [4, 4], "k", lw=2)
+
+    dessiner_resistance(ax, 1, 4, R1, "R1")
+
+    ax.plot([3, 4], [4, 4], "k", lw=2)
+
+    dessiner_resistance(ax, 4, 4, R2, "R2")
+
+    ax.plot([6, 8], [4, 4], "k", lw=2)
+
+    # Branche inférieure
+    ax.plot([0, 1], [1, 1], "k", lw=2)
+
+    dessiner_resistance(ax, 1, 1, R3, "R3")
+
+    ax.plot([3, 8], [1, 1], "k", lw=2)
+
+    # Montants gauche et droite
+    ax.plot([0, 0], [1, 4], "k", lw=2)
+    ax.plot([8, 8], [1, 4], "k", lw=2)
+
+    # Connexion de l'ohmmètre
+    ax.plot([0, 0], [1, -1], "b", lw=2)
+    ax.plot([8, 8], [1, -1], "b", lw=2)
+
+    ax.plot([0, 3.3], [-1, -1], "b", lw=2)
+    ax.plot([4.7, 8], [-1, -1], "b", lw=2)
+
+    dessiner_ohmmetre(ax, 4, -1, Req)
+
+
+
+    ax.set_xlim(-1, 9)
+    ax.set_ylim(-2, 6)
+
+    ax.axis("off")
+
+    return fig
+def schema_mixte2(R1, R2, R3, Req):
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Entrée
+    ax.plot([0, 1], [2, 2], "k", lw=2)
+
+    # Noeud gauche
+    ax.plot([1, 1], [1, 3], "k", lw=2)
+
+    # Branche haute
+    dessiner_resistance(ax, 1, 3, R1, "R1")
+    ax.plot([3, 5], [3, 3], "k", lw=2)
+
+    # Branche basse
+    dessiner_resistance(ax, 1, 1, R2, "R2")
+    ax.plot([3, 5], [1, 1], "k", lw=2)
+
+    # Noeud droit parallèle
+    ax.plot([5, 5], [1, 3], "k", lw=2)
+
+    # Liaison vers R3
+    ax.plot([5, 6], [2, 2], "k", lw=2)
+
+    dessiner_resistance(ax, 6, 2, R3, "R3")
+
+    ax.plot([8, 10], [2, 2], "k", lw=2)
+
+    # Bornes
+    ax.plot(0, 2, "ko", ms=8)
+    ax.plot(10, 2, "ko", ms=8)
+
+    # Ohmmètre
+    ax.plot([0, 0], [2, -1], "b", lw=2)
+    ax.plot([10, 10], [2, -1], "b", lw=2)
+
+    ax.plot([0, 4.3], [-1, -1], "b", lw=2)
+    ax.plot([5.7, 10], [-1, -1], "b", lw=2)
+
+    dessiner_ohmmetre(ax, 5, -1, Req)
+
+    ax.set_xlim(-1, 11)
+    ax.set_ylim(-2, 5)
+
+    ax.axis("off")
+
+    return fig
+def schema_mixte3(R1, R2, R3, Req):
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Entrée
+    ax.plot([0, 1], [2, 2], "k", lw=2)
+
+    # R1
+    dessiner_resistance(ax, 1, 2, R1, "R1")
+
+    ax.plot([3, 4], [2, 2], "k", lw=2)
+
+    # Noeud gauche du parallèle
+    ax.plot([4, 4], [1, 3], "k", lw=2)
+
+    # Branche haute : R2
+    dessiner_resistance(ax, 4, 3, R2, "R2")
+    ax.plot([6, 8], [3, 3], "k", lw=2)
+
+    # Branche basse : R3
+    dessiner_resistance(ax, 4, 1, R3, "R3")
+    ax.plot([6, 8], [1, 1], "k", lw=2)
+
+    # Noeud droit du parallèle
+    ax.plot([8, 8], [1, 3], "k", lw=2)
+
+    # Sortie
+    ax.plot([8, 10], [2, 2], "k", lw=2)
+
+    # Bornes
+    ax.plot(0, 2, "ko", ms=8)
+    ax.plot(10, 2, "ko", ms=8)
+
+    # Ohmmètre
+    ax.plot([0, 0], [2, -1], "b", lw=2)
+    ax.plot([10, 10], [2, -1], "b", lw=2)
+
+    ax.plot([0, 4.3], [-1, -1], "b", lw=2)
+    ax.plot([5.7, 10], [-1, -1], "b", lw=2)
+
+    dessiner_ohmmetre(ax, 5, -1, Req)
+
+
+
+    ax.set_xlim(-1, 11)
+    ax.set_ylim(-2, 5)
+
+    ax.axis("off")
+
+    return fig
 # ==================================
 # Interface Streamlit
 # ==================================
@@ -259,8 +398,7 @@ def afficher():
     montage = st.selectbox(
         "Type de montage",
         [
-            "Série",
-            "Parallèle"
+            "Série","Parallèle","(R1 + R2) // R3","(R1 // R2) + R3","R1 + (R2 // R3)"
         ]
     )
 
@@ -288,33 +426,25 @@ def afficher():
         )
 
     if montage == "Série":
-
         Req = R1 + R2 + R3
+        fig = schema_serie(R1, R2, R3, Req)
 
-        fig = schema_serie(
-            R1,
-            R2,
-            R3,
-            Req
-        )
+    elif montage == "Parallèle":
+        Req = 1 / (1/R1 + 1/R2 + 1/R3)
+        fig = schema_parallele(R1, R2, R3, Req)
 
-    else:
+    elif montage == "(R1 + R2) // R3":
+        Req = 1 / (1/(R1 + R2) + 1/R3)
+        fig = schema_mixte1(R1, R2, R3, Req)
 
-        Req = 1 / (
-            1/R1 +
-            1/R2 +
-            1/R3
-        )
+    elif montage == "(R1 // R2) + R3":
+        Req = (R1 * R2)/(R1 + R2) + R3
+        fig = schema_mixte2(R1, R2, R3, Req)
 
-        fig = schema_parallele(
-            R1,
-            R2,
-            R3,
-            Req
-        )
+    elif montage == "R1 + (R2 // R3)":
+        Req = R1 + (R2 * R3)/(R2 + R3)
+        fig = schema_mixte3(R1, R2, R3, Req)
 
-    st.success(
-        f"Résistance équivalente : {Req:.2f} Ω"
-    )
+
 
     st.pyplot(fig)
