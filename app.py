@@ -52,7 +52,7 @@ if page == "🏠 Accueil":
 
 Docteur en chimie des matériaux.
 
-Ancien chercheur au laboratoire de chimie industrielle de l'Université Jean Monnet et Professeur en BTS Métiers de l'eau et Systèmes constructifs Bois Habitats à Saint-Étienne.
+Ancien chercheur au laboratoire de chimie industrielle de l'Université Jean Monnet à Saint-Étienne et Professeur en BTS Métiers de l'eau et Systèmes constructifs Bois Habitats.
 
 Auteur de cinq publications scientifiques internationales dans le domaine des formes galéniques et des systèmes de libération contrôlée des médicaments.
 
