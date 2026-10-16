@@ -104,7 +104,7 @@ def dessiner_resistance(ax, x, y, valeur, nom):
 # Dessin ohmmètre
 # ==================================
 
-def dessiner_ohmmetre(ax, x, y, Req):
+def dessiner_ohmmetre(ax, x, y, Req=None):
 
     cercle = plt.Circle(
         (x, y),
@@ -125,11 +125,17 @@ def dessiner_ohmmetre(ax, x, y, Req):
         ha="center"
     )
 
+    valeur = "?"
+
+    if Req is not None:
+        valeur = f"{Req:.2f}"
+
     ax.text(
         x,
         y - 0.25,
-        f"{Req:.2f}",
-        fontsize=9,
+        valeur,
+        fontsize=10,
+        fontweight="bold",
         color="red",
         ha="center"
     )
@@ -246,7 +252,9 @@ def schema_parallele(R1, R2, R3, Req):
     ax.axis("off")
 
     return fig
-
+# ==================================
+# Montages mixtes
+# ==================================
 def schema_mixte1(R1, R2, R3, Req):
 
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -300,13 +308,15 @@ def schema_mixte2(R1, R2, R3, Req):
     # Noeud gauche
     ax.plot([1, 1], [1, 3], "k", lw=2)
 
-    # Branche haute
-    dessiner_resistance(ax, 1, 3, R1, "R1")
-    ax.plot([3, 5], [3, 3], "k", lw=2)
+    # Branches hautes
+    dessiner_resistance(ax, 2, 3, R1, "R1")
+    ax.plot([1, 2], [3, 3], "k", lw=2)
+    ax.plot([4, 5], [3, 3], "k", lw=2)
 
-    # Branche basse
-    dessiner_resistance(ax, 1, 1, R2, "R2")
-    ax.plot([3, 5], [1, 1], "k", lw=2)
+    # Branches basses
+    dessiner_resistance(ax, 2, 1, R2, "R2")
+    ax.plot([1, 2], [1, 1], "k", lw=2)
+    ax.plot([4, 5], [1, 1], "k", lw=2)
 
     # Noeud droit parallèle
     ax.plot([5, 5], [1, 3], "k", lw=2)
@@ -337,56 +347,7 @@ def schema_mixte2(R1, R2, R3, Req):
     ax.axis("off")
 
     return fig
-def schema_mixte3(R1, R2, R3, Req):
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-
-    # Entrée
-    ax.plot([0, 1], [2, 2], "k", lw=2)
-
-    # R1
-    dessiner_resistance(ax, 1, 2, R1, "R1")
-
-    ax.plot([3, 4], [2, 2], "k", lw=2)
-
-    # Noeud gauche du parallèle
-    ax.plot([4, 4], [1, 3], "k", lw=2)
-
-    # Branche haute : R2
-    dessiner_resistance(ax, 4, 3, R2, "R2")
-    ax.plot([6, 8], [3, 3], "k", lw=2)
-
-    # Branche basse : R3
-    dessiner_resistance(ax, 4, 1, R3, "R3")
-    ax.plot([6, 8], [1, 1], "k", lw=2)
-
-    # Noeud droit du parallèle
-    ax.plot([8, 8], [1, 3], "k", lw=2)
-
-    # Sortie
-    ax.plot([8, 10], [2, 2], "k", lw=2)
-
-    # Bornes
-    ax.plot(0, 2, "ko", ms=8)
-    ax.plot(10, 2, "ko", ms=8)
-
-    # Ohmmètre
-    ax.plot([0, 0], [2, -1], "b", lw=2)
-    ax.plot([10, 10], [2, -1], "b", lw=2)
-
-    ax.plot([0, 4.3], [-1, -1], "b", lw=2)
-    ax.plot([5.7, 10], [-1, -1], "b", lw=2)
-
-    dessiner_ohmmetre(ax, 5, -1, Req)
-
-
-
-    ax.set_xlim(-1, 11)
-    ax.set_ylim(-2, 5)
-
-    ax.axis("off")
-
-    return fig
 # ==================================
 # Interface Streamlit
 # ==================================
@@ -395,56 +356,113 @@ def afficher():
 
     st.title("⚡ Associations de résistances")
 
-    montage = st.selectbox(
-        "Type de montage",
-        [
-            "Série","Parallèle","(R1 + R2) // R3","(R1 // R2) + R3","R1 + (R2 // R3)"
-        ]
-    )
+    # -----------------------------
+    # Variables de session
+    # -----------------------------
+    if "montage" not in st.session_state:
+        st.session_state.montage = None
+
+    if "calculer" not in st.session_state:
+        st.session_state.calculer = False
+
+    # ============================
+# Saisie des résistances
+# ============================
+
+    st.subheader("Valeurs des résistances")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
         R1 = st.number_input(
-            "R1 (Ω)",
-            min_value=1.0,
-            value=100.0
-        )
+        "R1 (Ω)",
+        min_value=1.0,
+        value=100.0
+    )
 
     with col2:
         R2 = st.number_input(
-            "R2 (Ω)",
-            min_value=1.0,
-            value=220.0
-        )
+        "R2 (Ω)",
+        min_value=1.0,
+        value=220.0
+    )
 
     with col3:
         R3 = st.number_input(
-            "R3 (Ω)",
-            min_value=1.0,
-            value=330.0
-        )
+        "R3 (Ω)",
+        min_value=1.0,
+        value=330.0
+    )
 
-    if montage == "Série":
-        Req = R1 + R2 + R3
-        fig = schema_serie(R1, R2, R3, Req)
+# ============================
+# Choix du montage
+# ============================
 
-    elif montage == "Parallèle":
-        Req = 1 / (1/R1 + 1/R2 + 1/R3)
-        fig = schema_parallele(R1, R2, R3, Req)
+    st.subheader("Dessiner un montage")
 
-    elif montage == "(R1 + R2) // R3":
-        Req = 1 / (1/(R1 + R2) + 1/R3)
-        fig = schema_mixte1(R1, R2, R3, Req)
+    c1, c2, c3, c4 = st.columns(4)
 
-    elif montage == "(R1 // R2) + R3":
-        Req = (R1 * R2)/(R1 + R2) + R3
-        fig = schema_mixte2(R1, R2, R3, Req)
+    with c1:
+        if st.button("Série"):
+            st.session_state.montage = "Série"
+            st.session_state.calculer = False
 
-    elif montage == "R1 + (R2 // R3)":
-        Req = R1 + (R2 * R3)/(R2 + R3)
-        fig = schema_mixte3(R1, R2, R3, Req)
+    with c2:
+        if st.button("Parallèle"):
+            st.session_state.montage = "Parallèle"
+            st.session_state.calculer = False
+
+    with c3:
+        if st.button("(R1+R2)//R3"):
+            st.session_state.montage = "(R1 + R2) // R3"
+            st.session_state.calculer = False
+
+    with c4:
+        if st.button("(R1//R2)+R3"):
+            st.session_state.montage = "(R1 // R2) + R3"
+            st.session_state.calculer = False
+
+    montage = st.session_state.montage
+    # -----------------------------
+    # Calcul de Req
+    # -----------------------------
+    if montage is not None:
+
+        if montage == "Série":
+            Req = R1 + R2 + R3
+
+        elif montage == "Parallèle":
+            Req = 1 / (1/R1 + 1/R2 + 1/R3)
+
+        elif montage == "(R1 + R2) // R3":
+            Req = 1 / (1/(R1 + R2) + 1/R3)
+
+        elif montage == "(R1 // R2) + R3":
+            Req = (R1 * R2)/(R1 + R2) + R3
 
 
 
-    st.pyplot(fig)
+        if st.button("✅ Calculer Req puis cliquer içi pour vérifier"):
+            st.session_state.calculer = True
+
+        Req_affiche = Req if st.session_state.calculer else None
+
+        if montage == "Série":
+            fig = schema_serie(R1, R2, R3, Req_affiche)
+
+        elif montage == "Parallèle":
+            fig = schema_parallele(R1, R2, R3, Req_affiche)
+
+        elif montage == "(R1 + R2) // R3":
+            fig = schema_mixte1(R1, R2, R3, Req_affiche)
+
+        elif montage == "(R1 // R2) + R3":
+            fig = schema_mixte2(R1, R2, R3, Req_affiche)
+
+
+
+        st.pyplot(fig)
+
+    else:
+        st.info("👆 Cliquer sur le montage pour vérifier")
+
