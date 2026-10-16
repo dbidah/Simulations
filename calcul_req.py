@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 
 couleurs = {
     0: "black",
-    1: "brown", 
-    
+    1: "brown",
     2: "red",
     3: "orange",
     4: "yellow",
@@ -189,55 +188,55 @@ def schema_parallele(R1, R2, R3, Req):
 
     # R1
 
-    ax.plot([0, 2], [5, 5], "k", linewidth=2)
-    ax.plot([4, 8], [5, 5], "k", linewidth=2)
+    ax.plot([0, 3], [6, 6], "k", linewidth=2)
+    ax.plot([5, 8], [6, 6], "k", linewidth=2)
 
     dessiner_resistance(
         ax,
-        2,
-        5,
+        3,
+        6,
         R1,
         "R1"
     )
 
     # R2
 
-    ax.plot([0, 2], [3, 3], "k", linewidth=2)
-    ax.plot([4, 8], [3, 3], "k", linewidth=2)
+    ax.plot([0, 3], [4, 4], "k", linewidth=2)
+    ax.plot([5, 8], [4, 4], "k", linewidth=2)
 
     dessiner_resistance(
         ax,
-        2,
         3,
+        4,
         R2,
         "R2"
     )
 
     # R3
 
-    ax.plot([0, 2], [1, 1], "k", linewidth=2)
-    ax.plot([4, 8], [1, 1], "k", linewidth=2)
+    ax.plot([0, 3], [2, 2], "k", linewidth=2)
+    ax.plot([5, 8], [2, 2], "k", linewidth=2)
 
     dessiner_resistance(
         ax,
+        3,
         2,
-        1,
         R3,
         "R3"
     )
 
     # Connexion ohmmètre
 
-    ax.plot([0, 0], [0, -1], "b")
-    ax.plot([8, 8], [0, -1], "b")
+    ax.plot([0, 0], [0, 0], "b")
+    ax.plot([8, 8], [0, 0], "b")
 
-    ax.plot([0, 3.3], [-1, -1], "b")
-    ax.plot([4.7, 8], [-1, -1], "b")
+    ax.plot([0, 3.3], [0, 0], "b")
+    ax.plot([4.7, 8], [0, 0], "b")
 
     dessiner_ohmmetre(
         ax,
         4,
-        -1,
+        0,
         Req
     )
 
@@ -257,18 +256,18 @@ def schema_mixte1(R1, R2, R3, Req):
 
     dessiner_resistance(ax, 1, 4, R1, "R1")
 
-    ax.plot([3, 4], [4, 4], "k", lw=2)
+    ax.plot([3, 5], [4, 4], "k", lw=2)
 
-    dessiner_resistance(ax, 4, 4, R2, "R2")
+    dessiner_resistance(ax, 5, 4, R2, "R2")
 
-    ax.plot([6, 8], [4, 4], "k", lw=2)
+    ax.plot([7, 8], [4, 4], "k", lw=2)
 
     # Branche inférieure
-    ax.plot([0, 1], [1, 1], "k", lw=2)
+    ax.plot([0, 3], [1, 1], "k", lw=2)
 
-    dessiner_resistance(ax, 1, 1, R3, "R3")
+    dessiner_resistance(ax, 3, 1, R3, "R3")
 
-    ax.plot([3, 8], [1, 1], "k", lw=2)
+    ax.plot([5, 8], [1, 1], "k", lw=2)
 
     # Montants gauche et droite
     ax.plot([0, 0], [1, 4], "k", lw=2)
