@@ -13,7 +13,7 @@ def afficher():
 
     planete = st.sidebar.selectbox(
         "🌍 Planète",
-        ["Terre g = 9,81", "Lune g = 1,62", "Mars g = 3,71", "Jupiter g = 24,76"]
+        ["Terre", "Lune", "Mars", "Jupiter"]
     )
 
     gravites = {
