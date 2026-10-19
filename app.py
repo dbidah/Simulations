@@ -46,4 +46,3 @@ elif page == "🔬 Simulations":
         chute_libre()
     elif simulation == "⚡ Calcul Req":
         calcul_req()
-
