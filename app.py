@@ -1,6 +1,7 @@
 import streamlit as st
 from chute_libre import afficher as chute_libre
 from calcul_req import afficher as calcul_req
+from Loi_Ohm_CC import afficher as Loi_Ohm_CC
 
 st.set_page_config(page_title="Simulations Physique-Chimie",page_icon="🔬",layout="wide")
 # ==========================
@@ -38,7 +39,7 @@ Cette plateforme est le fruit d'une double expérience de chercheur et d'enseign
 elif page == "🔬 Simulations":
     st.sidebar.markdown("---")
     st.sidebar.subheader("🔬 Choisissez une simulation")
-    simulation = st.sidebar.radio("",["Choisir une simulation...","🎯 Tir parabolique","⚡ Calcul Req"])
+    simulation = st.sidebar.radio("",["Choisir une simulation...","🎯 Tir parabolique","⚡ Calcul Req","Loi d'Ohm en CC"])
     if simulation == "Choisir une simulation...":
         st.title("🔬 Simulations pédagogiques")
         st.info("Sélectionnez une simulation dans le menu de gauche.")
@@ -46,3 +47,5 @@ elif page == "🔬 Simulations":
         chute_libre()
     elif simulation == "⚡ Calcul Req":
         calcul_req()
+    elif simulation == "Loi d'Ohm":
+        Loi_Ohm_CC()    
