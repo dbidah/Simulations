@@ -19,7 +19,7 @@ if page == "👨‍🏫 Parcours & Travaux":
     st.title("🔬 Simulations Interactives de Physique-Chimie")
     st.info("Une plateforme dédiée à la compréhension des phénomènes physiques et chimiques grâce à la simulation numérique.")
     col1, col2, col3 = st.columns(3)
-    col1.metric("Simulations disponibles", "2")
+    col1.metric("Simulations disponibles", "3")
     col2.metric("Domaines", "Physique & Chimie")
     col3.metric("Version", "1.0")
     st.markdown("---")
