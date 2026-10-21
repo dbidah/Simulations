@@ -37,15 +37,86 @@ Cette plateforme est le fruit d'une double expérience de chercheur et d'enseign
 # SIMULATIONS
 # ==========================
 elif page == "🔬 Simulations":
+
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🔬 Choisissez une simulation")
-    simulation = st.sidebar.radio("",["Choisir une simulation...","🎯 Tir parabolique","⚡ Calcul Req","Loi d'Ohm en CC"])
+    st.sidebar.subheader("🔬 Simulations Interactives")
+
+    # Niveau 1 : Matière
+    matiere = st.sidebar.selectbox(
+        "Discipline",
+        ["Physique", "Chimie"]
+    )
+
+    # ======================
+    # PHYSIQUE
+    # ======================
+    if matiere == "Physique":
+
+        theme = st.sidebar.selectbox(
+            "Thème",
+            [
+                "⚙️ Mécanique",
+                "⚡ Électricité",
+                "🔊 Acoustique",
+                "🔭 Optique",
+                "🌡️ Thermodynamique"
+            ]
+        )
+
+        if theme == "⚙️ Mécanique":
+
+            simulation = st.sidebar.radio(
+                "Simulation",
+                [
+                    "Choisir une simulation...",
+                    "🎯 Tir parabolique"
+                ]
+            )
+
+        elif theme == "⚡ Électricité":
+
+            simulation = st.sidebar.radio(
+                "Simulation",
+                [
+                    "Choisir une simulation...",
+                    "⚡ Calcul Req",
+                    "⚡ Loi d'Ohm en CC"
+                ]
+            )
+
+        else:
+            simulation = "Choisir une simulation..."
+
+    # ======================
+    # CHIMIE
+    # ======================
+    else:
+
+        theme = st.sidebar.selectbox(
+            "Thème",
+            [
+                "⚛️ Atomes",
+                "🧪 Acides-Bases",
+                "🔄 Oxydo-réduction"
+            ]
+        )
+
+        simulation = "Choisir une simulation..."
+
+    # ======================
+    # LANCEMENT SIMULATIONS
+    # ======================
+
     if simulation == "Choisir une simulation...":
         st.title("🔬 Simulations pédagogiques")
         st.info("Sélectionnez une simulation dans le menu de gauche.")
+
     elif simulation == "🎯 Tir parabolique":
         chute_libre()
+
     elif simulation == "⚡ Calcul Req":
         calcul_req()
-    elif simulation == "Loi d'Ohm":
-        Loi_Ohm_CC()    
+
+    elif simulation == "⚡ Loi d'Ohm en CC":
+        Loi_Ohm_CC()
+    

@@ -17,7 +17,7 @@ Technologie pharmaceutique • Formes galéniques • Libération contrôlée de
 """)
 
 st.success(
-    "📚 6 publications internationales recensées entre 1990 et 1997."
+    "📚 6 publications internationales réalisées entre 1990 et 1997."
 )
 
 st.divider()
