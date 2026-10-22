@@ -68,7 +68,7 @@ def dessiner_voltmetre(ax, x, y, U):
     cercle = plt.Circle((x, y),0.45,fill=False,linewidth=2,color="green")
     ax.add_patch(cercle)
     ax.text(x,y + 0.05,"V",fontsize=12,fontweight="bold",ha="center")
-    ax.text(x,y - 0.22,f"{U:.2f}",fontsize=8,color="green",ha="center")
+    ax.text(x,y - 0.22,f"{U:.1f}",fontsize=8,color="green",ha="center")
 # ==================================
 # Voltmètre branché aux bornes
 # ==================================
@@ -114,7 +114,7 @@ def dessiner_amperemetre(ax, x, y, I):
     cercle = plt.Circle((x, y),0.50,facecolor="white",edgecolor="red",linewidth=2,zorder=21)
     ax.add_patch(cercle)
     ax.text(x,y + 0.05,"A",fontsize=12,fontweight="bold",ha="center",zorder=22)
-    ax.text(x,y - 0.22,f"{I:.3f}",fontsize=8,color="red",ha="center",zorder=22)
+    ax.text(x,y - 0.22,f"{I:.4f}",fontsize=8,color="red",ha="center",zorder=22)
 def schema_serie(R1, R2, R3,U,U1, U2, U3,It):
     fig, ax = plt.subplots(figsize=(11, 4))
     ax.plot([0, 1], [0, 0], "k", linewidth=2)
@@ -140,6 +140,7 @@ def schema_serie(R1, R2, R3,U,U1, U2, U3,It):
     dessiner_fleche_tension(ax,4,6,1.2,"U2")
 # Tension U3
     dessiner_fleche_tension(ax,7,9,1.2,"U3")
+# Tension U    
     dessiner_fleche_tension(ax,4.2,5.8,-3.4,"U")
     ax.axis("off")
     dessiner_amperemetre(ax, 2.5, -2.2, It)
@@ -226,17 +227,29 @@ def schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     # Montants gauche et droite
     ax.plot([-1, -1], [1, 4], "k", lw=2)
     ax.plot([8, 8], [1, 4], "k", lw=2)
-    dessiner_amperemetre(ax, 0, 4, I1)
+    dessiner_amperemetre(ax, 0.2, 4, I1)
     dessiner_fleche_courant(ax, -1, 4, -0.5, 4)
-    dessiner_amperemetre(ax, 4, 4, I2)
+    dessiner_nom_courant(ax, -0.5, 4.5, "I1")
+    dessiner_amperemetre(ax, 4.2, 4, I2)
     dessiner_fleche_courant(ax, 3, 4, 3.5, 4)
-    dessiner_amperemetre(ax, 1, 1.5, I3)
+    dessiner_nom_courant(ax, 3.5, 4.5, "I2")
+    dessiner_amperemetre(ax, 1.2, 1.5, I3)
     dessiner_fleche_courant(ax, 0, 1.5, 0.5, 1.5)
-    dessiner_amperemetre(ax, 1, -1, It)
+    dessiner_nom_courant(ax, 0.5, 2, "I3")
+    dessiner_amperemetre(ax, 1.2, -1, It)
     dessiner_fleche_courant(ax, 0.5, -1, 0, -1)
+    dessiner_nom_courant(ax, 0, -0.5, "I")
     dessiner_voltmetre_resistance(ax, 1, 4, U1)
     dessiner_voltmetre_resistance(ax, 5, 4, U2)
     dessiner_voltmetre_resistance(ax, 3, 1.5, U3)
+    # Tension U1
+    dessiner_fleche_tension(ax,1,3,5,"U1")
+    # Tension U2
+    dessiner_fleche_tension(ax,5,7,5,"U2")
+    # Tension U3
+    dessiner_fleche_tension(ax,3,5,2.4,"U3")
+    # Tension U    
+    dessiner_fleche_tension(ax,3,5,-2.2,"U")
     # Générateur
     dessiner_generateur(ax, 4, -1, U)
     ax.plot([-1, -1], [1, -1], "b", lw=2)
@@ -244,7 +257,7 @@ def schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     ax.plot([-1, 3.3], [-1, -1], "b", lw=2)
     ax.plot([4.7, 8], [-1, -1], "b", lw=2)
     ax.set_xlim(-1, 9)
-    ax.set_ylim(-2, 6)
+    ax.set_ylim(-2.5, 6)
     ax.axis("off")
     return fig
 def schema_mixte2(R1, R2, R3):
