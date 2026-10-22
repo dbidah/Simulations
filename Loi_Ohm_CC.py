@@ -217,12 +217,18 @@ def schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     # Branche supérieure
     ax.plot([-1, 1], [4, 4], "k", lw=2)
     dessiner_resistance(ax, 1, 4, R1, "R1")
+    dessiner_voltmetre_resistance(ax, 1, 4, U1)
+    dessiner_fleche_tension(ax,1,3,5,"U1")
     ax.plot([3, 5], [4, 4], "k", lw=2)
     dessiner_resistance(ax, 5, 4, R2, "R2")
+    dessiner_voltmetre_resistance(ax, 5, 4, U2)
+    dessiner_fleche_tension(ax,5,7,5,"U2")
     ax.plot([7, 8], [4, 4], "k", lw=2)
     # Branche inférieure
     ax.plot([-1, 3], [1.5, 1.5], "k", lw=2)
     dessiner_resistance(ax, 3, 1.5, R3, "R3")
+    dessiner_voltmetre_resistance(ax, 3, 1.5, U3)
+    dessiner_fleche_tension(ax,3,5,2.4,"U3")
     ax.plot([5, 8], [1.5, 1.5], "k", lw=2)
     # Montants gauche et droite
     ax.plot([-1, -1], [1, 4], "k", lw=2)
@@ -238,17 +244,7 @@ def schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     dessiner_nom_courant(ax, 0.5, 2, "I3")
     dessiner_amperemetre(ax, 1.2, -1, It)
     dessiner_fleche_courant(ax, 0.5, -1, 0, -1)
-    dessiner_nom_courant(ax, 0, -0.5, "I")
-    dessiner_voltmetre_resistance(ax, 1, 4, U1)
-    dessiner_voltmetre_resistance(ax, 5, 4, U2)
-    dessiner_voltmetre_resistance(ax, 3, 1.5, U3)
-    # Tension U1
-    dessiner_fleche_tension(ax,1,3,5,"U1")
-    # Tension U2
-    dessiner_fleche_tension(ax,5,7,5,"U2")
-    # Tension U3
-    dessiner_fleche_tension(ax,3,5,2.4,"U3")
-    # Tension U    
+    dessiner_nom_courant(ax, 0, -0.5, "I")    
     dessiner_fleche_tension(ax,3,5,-2.2,"U")
     # Générateur
     dessiner_generateur(ax, 4, -1, U)
@@ -260,36 +256,54 @@ def schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     ax.set_ylim(-2.5, 6)
     ax.axis("off")
     return fig
-def schema_mixte2(R1, R2, R3):
+def schema_mixte2(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     fig, ax = plt.subplots(figsize=(12, 6))
-    # Entrée
-    ax.plot([0, 1], [2, 2], "k", lw=2)
-    # Noeud gauche
-    ax.plot([1, 1], [1, 3], "k", lw=2)
-    # Branches hautes
-    dessiner_resistance(ax, 2, 3, R1, "R1")
-    ax.plot([1, 2], [3, 3], "k", lw=2)
-    ax.plot([4, 5], [3, 3], "k", lw=2)
-    # Branches basses
-    dessiner_resistance(ax, 2, 1, R2, "R2")
-    ax.plot([1, 2], [1, 1], "k", lw=2)
-    ax.plot([4, 5], [1, 1], "k", lw=2)
-    # Noeud droit parallèle
-    ax.plot([5, 5], [1, 3], "k", lw=2)
-    # Liaison vers R3
-    ax.plot([5, 6], [2, 2], "k", lw=2)
-    dessiner_resistance(ax, 6, 2, R3, "R3")
-    ax.plot([8, 10], [2, 2], "k", lw=2)
-    # Bornes
-    ax.plot(0, 2, "ko", ms=8)
-    ax.plot(10, 2, "ko", ms=8)
-    # Ohmmètre
+    ax.plot([0, 0.5], [2, 2], "k", lw=2)     # fil avant noeud à gauche
+    ax.plot([0.5, 2.5], [3, 3], "k", lw=2)     # fil à gauche de R1
+    ax.plot([4.5, 5], [3, 3], "k", lw=2)     # fil à droite de R1
+    ax.plot([0.5, 2.5], [0.5, 0.5], "k", lw=2) # fil à gauche de R2
+    ax.plot([4.5, 5], [0.5, 0.5], "k", lw=2) # fil à droite de R2
+    ax.plot([5, 6], [2, 2], "k", lw=2)     # fil à gauche de R3
+    ax.plot([8, 10], [2, 2], "k", lw=2)    # fil à droite de R3
+    ax.plot([0.5, 0.5], [0.5, 3], "k", lw=2)   # fil vertical à gauche
+    ax.plot([5, 5], [0.5, 3], "k", lw=2)   # fil vertical à droite
+    # connexions générateur
     ax.plot([0, 0], [2, -1], "b", lw=2)
     ax.plot([10, 10], [2, -1], "b", lw=2)
     ax.plot([0, 4.3], [-1, -1], "b", lw=2)
     ax.plot([5.7, 10], [-1, -1], "b", lw=2)
+    # Bornes générateur
+    dessiner_generateur(ax, 5, -1, U)
+    dessiner_fleche_tension(ax,4,6,-2.2,"U")
+    ax.plot(0, 2, "ko", ms=8)
+    ax.plot(10, 2, "ko", ms=8)
+    # Connexions résistances
+    dessiner_resistance(ax, 2.5, 3, R1, "R1")
+    dessiner_voltmetre_resistance(ax, 2.5, 3, U1)
+    dessiner_fleche_tension(ax,2,4,3.8,"U1")
+    dessiner_resistance(ax, 2.5, 0.5, R2, "R2")
+    dessiner_voltmetre_resistance(ax, 2.5, 0.5, U2)
+    dessiner_fleche_tension(ax,2,4,1.2,"U2")
+    dessiner_resistance(ax, 6, 2, R3, "R3")
+    dessiner_voltmetre_resistance(ax, 6, 2, U3)
+    dessiner_fleche_tension(ax,6,8,2.8,"U3")
+
+    dessiner_amperemetre(ax, 1.8, 3, I1)
+    dessiner_fleche_courant(ax, 0.5, 3, 1, 3)
+    dessiner_nom_courant(ax, 1, 3.5, "I1")
+    dessiner_amperemetre(ax, 1.8, 0.5, I2)
+    dessiner_fleche_courant(ax, 0.5, 0.5, 1, 0.5)
+    dessiner_nom_courant(ax, 1, 1, "I2")
+
+    dessiner_amperemetre(ax, 9, 2, I3)
+    dessiner_fleche_courant(ax, 8, 2, 8.5, 2)
+    dessiner_nom_courant(ax, 8.5, 2.5, "I3")
+    dessiner_amperemetre(ax, 1.2, -1, It)
+    dessiner_fleche_courant(ax, 2.2, -1, 1.7, -1)
+    dessiner_nom_courant(ax, 1.7, -0.5, "I") 
+    #Limites fenêtre
     ax.set_xlim(-1, 11)
-    ax.set_ylim(-2, 5)
+    ax.set_ylim(-2.5, 5)
     ax.axis("off")
     return fig
 # ==================================
@@ -370,9 +384,7 @@ def afficher():
         U1 = I1 * R1
         U2 = I2 * R2
         U3 = I3 * R3
-        fig = schema_serie(
-            R1, R2, R3,
-            U, U1, U2, U3, It)
+        fig = schema_serie(R1, R2, R3,U, U1, U2, U3, It)
     elif montage == "Parallèle":
         Req = 1 / (1/R1 + 1/R2 + 1/R3)
         I1 = U / R1
@@ -380,10 +392,7 @@ def afficher():
         I3 = U / R3
         It = I1 + I2 + I3
         U1 = U2 = U3 = U
-        fig = schema_parallele(
-            R1, R2, R3,
-            U, U1, U2, U3,
-            I1, I2, I3, It)
+        fig = schema_parallele(R1, R2, R3,U, U1, U2, U3,I1, I2, I3, It)
     elif montage == "(R1 + R2) // R3":
         R12 = R1 + R2
         Req = 1 / (1/R12 + 1/R3)
@@ -394,8 +403,7 @@ def afficher():
         U1 = I1 * R1
         U2 = I2 * R2
         U3 = U
-        fig = schema_mixte1(
-            R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It)
+        fig = schema_mixte1(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It)
     elif montage == "(R1 // R2) + R3":
         R12 = (R1 * R2) / (R1 + R2)
         Req = R12 + R3
@@ -407,7 +415,6 @@ def afficher():
         I3 = It
         U1 = U12
         U2 = U12
-        fig = schema_mixte2(
-            R1, R2, R3)
+        fig = schema_mixte2(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It)
     st.pyplot(fig)
 
