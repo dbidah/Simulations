@@ -293,7 +293,6 @@ def schema_mixte2(R1, R2, R3,U,U1, U2, U3,I1, I2, I3,It):
     dessiner_nom_courant(ax, 1, 3.5, "I1")
     dessiner_amperemetre(ax, 1.8, 0.5, I2)
     dessiner_fleche_courant(ax, 0.5, 0.5, 1, 0.5)
-    dessiner_nom_courant(ax, 1, 1, "I2")
 
     dessiner_amperemetre(ax, 9, 2, I3)
     dessiner_fleche_courant(ax, 8, 2, 8.5, 2)
