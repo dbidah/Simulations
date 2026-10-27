@@ -169,11 +169,20 @@ def afficher():
         st.session_state.score = 0
     if "question" not in st.session_state:
         st.session_state.question = 0
+    if "etape" not in st.session_state:
+        st.session_state.etape = 1
     if "validation_formule" not in st.session_state:
         st.session_state.validation_formule = False
+    if "validation_calcul" not in st.session_state:
+        st.session_state.validation_calcul = False
     if "message_qcm" not in st.session_state:
         st.session_state.message_qcm = ""
-
+    if "resultat_estimation" not in st.session_state:
+        st.session_state.resultat_estimation = ""
+    if "resultat_formule" not in st.session_state:
+        st.session_state.resultat_formule = ""
+    if "resultat_calcul" not in st.session_state:
+        st.session_state.resultat_calcul = ""
     # ============================
     # Saisie des résistances
     # ============================
@@ -186,44 +195,18 @@ def afficher():
     with col3:
         R3 = st.number_input("R3 (Ω)",min_value=1.0,value=330.0)
     # ============================
-    # Choix du montage
-    # ============================
-    # ============================
     # Les 4 questions
     # ============================
-    questions = [
-    {
-        "nom": "Série",
-        "bonnes_reponses": [
-            "Req = R1 + R2 + R3"
-        ]
-    },
-    {
-        "nom": "Parallèle",
-        "bonnes_reponses": [
-            "Req = 1/(1/R1 + 1/R2 + 1/R3)",
-            "Req = (R1*R2*R3)/(R1*R2 + R1*R3 + R2*R3)"
-        ]
-    },
-    {
-        "nom": "(R1 + R2) // R3",
-        "bonnes_reponses": [
-            "Req = 1/(1/(R1+R2) + 1/R3)","Req = (R1+R2)*R3/(R1+R2+R3)"
-        ]
-    },
-    {
-        "nom": "(R1 // R2) + R3",
-        "bonnes_reponses": [
-            "Req = (R1*R2)/(R1+R2) + R3",
-            "Req = 1/(1/R1 + 1/R2) + R3"
-        ]
-    }
-]
+    questions = [{"nom": "Série","bonnes_reponses": ["Req = R1 + R2 + R3"]},
+    {"nom": "Parallèle","bonnes_reponses": ["Req = 1/(1/R1 + 1/R2 + 1/R3)",
+    "Req = (R1*R2*R3)/(R1*R2 + R1*R3 + R2*R3)"]},{"nom": "(R1 + R2) // R3",
+    "bonnes_reponses": ["Req = 1/(1/(R1+R2) + 1/R3)","Req = (R1+R2)*R3/(R1+R2+R3)"]},
+    {"nom": "(R1 // R2) + R3","bonnes_reponses": ["Req = (R1*R2)/(R1+R2) + R3","Req = 1/(1/R1 + 1/R2) + R3"]}]
     # ============================
     # Fin du quiz
     # ============================
     if st.session_state.question >= 4:
-        pourcentage = (st.session_state.score / 4) * 100
+        pourcentage = (st.session_state.score / 12) * 100
         if pourcentage == 100:
             appreciation = "Excellent !"
         elif pourcentage >= 75:
@@ -233,7 +216,7 @@ def afficher():
         else:
             appreciation = "À retravailler."
         st.balloons()
-        st.markdown(f"🏆 Quiz terminé !&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; Score : {pourcentage:.0f} %&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {appreciation}",
+        st.markdown(f"🏆 Quiz terminé !&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Score :{pourcentage:.0f} %&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {appreciation}",
         unsafe_allow_html=True)
         return
     # ============================
@@ -241,9 +224,7 @@ def afficher():
     # ============================
     montage = questions[st.session_state.question]["nom"]
     bonnes_reponses = questions[st.session_state.question]["bonnes_reponses"]
-    st.info(f"🏆 Score : {st.session_state.score}/4")
-    st.subheader(
-    f"Question {st.session_state.question + 1}/4")
+
     # ============================
     # Calcul de Req
     # ============================
@@ -256,99 +237,166 @@ def afficher():
     elif montage == "(R1 // R2) + R3":
         Req = 1/(1/R1+1/R2) + R3
     # ============================
-    # Schéma sans résultat
+    # Affichage de Req dans le schéma
     # ============================
-    if not st.session_state.validation_formule:
+    Req_affiche = None
+    if st.session_state.validation_calcul:
+        Req_affiche = Req
+    if montage == "Série":
+        fig = schema_serie(R1, R2, R3, Req_affiche)
+    elif montage == "Parallèle":
+        fig = schema_parallele(R1, R2, R3, Req_affiche)
+    elif montage == "(R1 + R2) // R3":
+        fig = schema_mixte1(R1, R2, R3, Req_affiche)
+    elif montage == "(R1 // R2) + R3":
+        fig = schema_mixte2(R1, R2, R3, Req_affiche)
+    st.pyplot(fig)
+    # ====================================
+    # Résultats de la question
+    # ====================================
+    if (st.session_state.resultat_estimation != ""or st.session_state.resultat_formule != ""or st.session_state.resultat_calcul != ""):
+        score_question = 0
+    if st.session_state.resultat_estimation == "bonne":
+        st.success("✅ Estimation : Bonne réponse")
+        score_question += 1
+    elif st.session_state.resultat_estimation == "mauvaise":
+        st.error("❌ Estimation : Mauvaise réponse")
+
+    if st.session_state.resultat_formule == "bonne":
+        st.success("✅ Formule : Bonne réponse")
+        score_question += 1
+    elif st.session_state.resultat_formule == "mauvaise":
+        st.error("❌ Formule : Mauvaise réponse")
+
+    if st.session_state.resultat_calcul == "bonne":
+        st.success("✅ Calcul : Bonne réponse")
+        score_question += 1
+    elif st.session_state.resultat_calcul == "mauvaise":
+        st.error("❌ Calcul : Mauvaise réponse")
+    # ====================================
+    # ETAPE 1 : Estimation physique
+    # ====================================
+    if st.session_state.etape == 1:
         if montage == "Série":
-            fig = schema_serie(R1, R2, R3, None)
+            estimation = st.radio(
+            "Avant de calculer, laquelle de ces affirmations est vraie ?",[
+            "Req est inférieure à la plus petite résistance",
+            "Req est comprise entre la résistance minimale et la résistance maximale",
+            "Req est supérieure à la plus grande résistance"])
+            bonne_estimation = "Req est supérieure à la plus grande résistance"
         elif montage == "Parallèle":
-            fig = schema_parallele(R1, R2, R3, None)
+            estimation = st.radio(
+            "Avant de calculer, laquelle de ces affirmations est vraie ?",
+            ["Req est inférieure à la plus petite résistance",
+             "Req est comprise entre la résistance minimale et la résistance maximale",
+             "Req est supérieure à la plus grande résistance"])
+            bonne_estimation = "Req est inférieure à la plus petite résistance"
         elif montage == "(R1 + R2) // R3":
-            fig = schema_mixte1(R1, R2, R3, None)
+            estimation = st.radio(
+            "Avant de calculer, laquelle de ces affirmations est vraie ?",
+            ["Req est supérieure à R3",
+             "Req est inférieure à R3 et inférieure à (R1+R2)",
+             "Req est inférieure à R3 et Req est supérieure à (R1+R2)"])
+            bonne_estimation = "Req est inférieure à R3 et inférieure à (R1+R2)"
         elif montage == "(R1 // R2) + R3":
-            fig = schema_mixte2(R1, R2, R3, None)
-        st.pyplot(fig)
-    # ============================
-    # Question
-    # ============================
-    if not st.session_state.validation_formule:
-
-        import random
-
-        propositions = [
-    "Req = R1 + R2 + R3",
-    "Req = 1/(1/R1 + 1/R2 + 1/R3)",
-    "Req = (R1*R2*R3)/(R1*R2 + R1*R3 + R2*R3)",
-    "Req = 1/(1/(R1+R2) + 1/R3)",
-    "Req = (R1+R2)*R3/(R1+R2+R3)",
-    "Req = (R1*R2)/(R1+R2) + R3",
-    "Req = 1/(1/R1 + 1/R2) + R3"]
-
-        random.shuffle(propositions)
-
+            estimation = st.radio(
+            "Avant de calculer, laquelle de ces affirmations est vraie ?",
+            ["Req est supérieure à R3 et inférieure à (R1+R2)",
+             "Req est supérieure à R3",
+            "Req est inférieure à R3 et supérieure à (R1+R2)"])
+            bonne_estimation = "Req est supérieure à R3"
+        if st.button("Valider l'estimation"):
+            if estimation == bonne_estimation:
+                st.session_state.resultat_estimation = "bonne"
+                st.session_state.score += 1
+            else:
+                st.session_state.resultat_estimation = "mauvaise"
+            st.session_state.etape = 2
+            st.rerun()
+    # ====================================
+    # ETAPE 2 : Choix de la formule
+    # ====================================
+    elif st.session_state.etape == 2:
+        propositions = {r"$R_{eq}=R_1+R_2+R_3$":"Req = R1 + R2 + R3",
+        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1}+\dfrac{1}{R_2}+\dfrac{1}{R_3}}$":"Req = 1/(1/R1 + 1/R2 + 1/R3)",
+        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1+R_2}+\dfrac{1}{R_3}}$":"Req = 1/(1/(R1+R2) + 1/R3)",
+        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1}+\dfrac{1}{R_2}}+R_3$":"Req = 1/(1/R1 + 1/R2) + R3",}
+        liste_formules = list(propositions.keys())
         reponse = st.radio(
         "Choisir la formule correcte :",
-        propositions,
-        key=f"qcm_{st.session_state.question}"
-    )
-
-        if st.button("Valider la réponse"):
-
-            if reponse in bonnes_reponses:
+        liste_formules,
+        format_func=lambda x: x)
+        if st.button("Valider la formule"):
+            formule_choisie = propositions[reponse]
+            if formule_choisie in bonnes_reponses:
+                st.session_state.resultat_formule = "bonne"
                 st.session_state.score += 1
-                st.session_state.message_qcm = "bonne"
-
             else:
-                st.session_state.message_qcm = "mauvaise"
-
-            st.session_state.validation_formule = True
+                st.session_state.resultat_formule = "mauvaise"
+            st.session_state.etape = 3
             st.rerun()
-    
-    # ============================
-    # Affichage de la correction
-    # ============================
-        if st.session_state.message_qcm == "bonne":
-            st.success("✅ Bonne réponse")
+    # ====================================
+    # ETAPE 3 : Calcul de Req
+    # ====================================
 
-        elif st.session_state.message_qcm == "mauvaise":
-            st.error("❌ Mauvaise réponse")
-            st.info("✅ Réponse correcte :\n\n"+ "\nOU\n".join(bonnes_reponses)
-)
-    if st.session_state.validation_formule:
+    if "resultat_calcul" not in st.session_state:
+        st.session_state.resultat_calcul = ""
 
-        if st.session_state.message_qcm == "bonne":
-            st.success("✅ Bonne réponse")
+    elif st.session_state.etape == 3 and not st.session_state.validation_calcul:
 
-        elif st.session_state.message_qcm == "mauvaise":
-            st.error("❌ Mauvaise réponse")
-            st.info(f"✅ Réponse correcte : {bonnes_reponses}")
+        with st.form("form_req"):
 
-        if st.button("🧮 Calculer"):
-            st.session_state.calculer = True
+            reponse_req = st.text_input(
+            "Calculer Req (Ω) au centième près",
+            placeholder="Entrer la valeur de Req"
+        )
 
-        if st.session_state.calculer:
-            st.success(f"✅ Req = {Req:.2f} Ω")
-        Req_affiche = Req if st.session_state.calculer else None
-        if montage == "Série":
-            fig = schema_serie(R1, R2, R3, Req_affiche)
-        elif montage == "Parallèle":
-            fig = schema_parallele(R1, R2, R3, Req_affiche)
-        elif montage == "(R1 + R2) // R3":
-            fig = schema_mixte1(R1, R2, R3, Req_affiche)
-        elif montage == "(R1 // R2) + R3":
-            fig = schema_mixte2(R1, R2, R3, Req_affiche)
-        st.pyplot(fig)
-        if st.session_state.calculer:
-            if st.session_state.question == 3:
-                if st.button("✅ Terminer"):
-                    st.session_state.question += 1
-                    st.rerun()
-            else:
-                if st.button("➡️ Question suivante"):
-                    st.session_state.question += 1
-                    st.session_state.validation_formule = False
-                    st.session_state.calculer = False
-                    st.session_state.message_qcm = ""
-                    st.rerun()
+            valider = st.form_submit_button("Valider le calcul")
+
+        if valider:
+
+            try:
+                reponse_req = float(reponse_req.replace(",", "."))
+
+                if abs(reponse_req - Req) < 0.1:
+                    st.session_state.resultat_calcul = "bonne"
+                    st.session_state.score += 1
+                else:
+                    st.session_state.resultat_calcul = "mauvaise"
+
+                st.session_state.validation_calcul = True
+                st.rerun()
+
+            except ValueError:
+                st.error("Veuillez saisir une valeur numérique.")
+    # ====================================
+    # Après validation du calcul
+    # ====================================
+    if st.session_state.validation_calcul:
+        score_question = 0
+        if st.session_state.resultat_estimation == "bonne":
+            score_question += 1
+        if st.session_state.resultat_formule == "bonne":
+            score_question += 1
+        if st.session_state.resultat_calcul == "bonne":
+            score_question += 1
+        st.info(f"🎯 Score de cette question : {score_question}/3")
+    # Boutons de navigation
+        if st.session_state.question == 3:
+            if st.button("✅ Terminer"):
+                st.session_state.question += 1
+                st.rerun()
+        else:
+            if st.button("➡️ Question suivante"):
+                st.session_state.question += 1
+                st.session_state.etape = 1
+                st.session_state.validation_formule = False
+                st.session_state.validation_calcul = False
+                st.session_state.message_qcm = ""
+                st.session_state.resultat_calcul = ""
+                st.session_state.resultat_estimation = ""
+                st.session_state.resultat_formule = ""
+                st.session_state.resultat_calcul = ""
+                st.rerun()
 if __name__ == "__main__":
     afficher()
