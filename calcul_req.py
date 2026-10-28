@@ -158,11 +158,14 @@ def schema_mixte2(R1, R2, R3, Req):
 # Interface Streamlit
 # ==================================
 def afficher():
-    st.title("⚡ Associations de résistances")
+    st.title("⚡ Résistance et Conductance")
     # -----------------------------
     # Variables de session
     # ----------------------------- 
     # ===============================
+    if "cours_valide" not in st.session_state:
+        st.session_state.cours_valide = False
+    
     if "calculer" not in st.session_state:
         st.session_state.calculer = False
     if "score" not in st.session_state:
@@ -183,6 +186,86 @@ def afficher():
         st.session_state.resultat_formule = ""
     if "resultat_calcul" not in st.session_state:
         st.session_state.resultat_calcul = ""
+
+    # ============================
+    # ESSENTIEL DU COURS + QCM
+    # ============================
+    if not st.session_state.cours_valide:
+        st.header("📘 Essentiel du cours")
+        st.markdown("""
+**La résistance :**
+- La **résistance électrique** (**R**) mesure l'aptitude d'un dipôle à s'opposer au passage du courant électrique.
+- Elle s'exprime en **ohms** (**Ω**).
+
+**La conductance :**
+- La **conductance** (**G**) mesure l'aptitude d'un dipôle à conduire le courant électrique.
+- Elle est l'inverse de la résistance : **G = 1 /R**
+- **G** s'exprime en siemens (**S**)
+- ✅ Plus la résistance est grande, plus la conductance est faible.
+- **Exemples :**   **si**   R = 10 Ω ⟹ G = 0,1    **et si**  R = 100 Ω ⟹ G = 0,01 S""")
+        st.subheader("Association en série")
+        st.markdown("""
+- Les résistances s'ajoutent. La résistance équivalente est donnée par :
+**Req = R1 + R2**
+- La conductance équivalente est :
+**Geq = 1 / Req**
+- ✅ La résistance équivalente est supérieure à la plus grande résistance.
+""")
+        st.subheader("Association en parallèle")
+        st.markdown("""
+- Les conductances s'ajoutent. La conductance équivalente est donnée par :
+**Geq = G1 + G2 + G3**
+- La résistance équivalente est :
+**Req = 1 / Geq**
+- ✅ La résistance équivalente est inférieure à la plus petite résistance.
+""")
+        st.subheader("Associations mixtes")
+        st.code("""
+        Pour calculer la résistance équivalente :
+        1. Repérer les résistances en série ou en parallèle.
+        2. Calculer leur équivalent.
+        3. Recommencer jusqu'à obtenir une seule résistance.
+        4. Vérifier la cohérence du résultat.""")
+        st.subheader("✅ Vérification des connaissances")
+        score = 0
+        q1 = st.radio(
+        "1) Dans une association série :",
+        ["Les résistances s'ajoutent","Les conductances s'ajoutent",
+        "Req est plus petite que toutes les résistances"],key="qcm1")
+        q2 = st.radio(
+        "2) Dans une association parallèle :",
+        ["Les résistances s'ajoutent","Les conductances s'ajoutent",
+        "Req est plus grande que toutes les résistances"],key="qcm2")
+        q3 = st.radio(
+        "3) Dans une association série :",
+        ["La résistance équivalente est supérieure à la plus grande résistance",
+        "La conductance équivalente est supérieure à la plus grande conductance",
+        "La conductance équivalente est égale à la somme des conductances"],key="qcm3")
+        q4 = st.radio(
+        "4) Dans une association parallèle :",
+        ["La résistance équivalente est supérieure à la plus grande résistance",
+        "La conductance équivalente est inférieure à la plus grande conductance",
+        "La conductance équivalente est égale à la somme des conductances"],key="qcm4")
+        if st.button("Valider le QCM avant de continuer"):
+            if q1 == "Les résistances s'ajoutent":
+                score += 1
+            if q2 == "Les conductances s'ajoutent":
+                score += 1
+            if q3 == "La résistance équivalente est supérieure à la plus grande résistance":
+                score += 1
+            if q4 == "La conductance équivalente est égale à la somme des conductances":
+                score += 1
+            if score == 4:
+                st.success(
+                "✅ Bravo ! Vous pouvez maintenant commencer l'activité."
+            )
+                st.session_state.cours_valide = True
+                st.rerun()
+
+            else:
+                st.error(f"❌ Score : {score}/4. Relisez le cours puis recommencez.")
+
+        st.stop()
     # ============================
     # Saisie des résistances
     # ============================
@@ -198,10 +281,9 @@ def afficher():
     # Les 4 questions
     # ============================
     questions = [{"nom": "Série","bonnes_reponses": ["Req = R1 + R2 + R3"]},
-    {"nom": "Parallèle","bonnes_reponses": ["Req = 1/(1/R1 + 1/R2 + 1/R3)",
-    "Req = (R1*R2*R3)/(R1*R2 + R1*R3 + R2*R3)"]},{"nom": "(R1 + R2) // R3",
-    "bonnes_reponses": ["Req = 1/(1/(R1+R2) + 1/R3)","Req = (R1+R2)*R3/(R1+R2+R3)"]},
-    {"nom": "(R1 // R2) + R3","bonnes_reponses": ["Req = (R1*R2)/(R1+R2) + R3","Req = 1/(1/R1 + 1/R2) + R3"]}]
+    {"nom": "Parallèle","bonnes_reponses": ["Req = 1/(G1+G2+G3)"]},
+    {"nom": "(R1 + R2) // R3","bonnes_reponses": ["Req = 1/(1/(R1+R2) + G3)"]},
+    {"nom": "(R1 // R2) + R3","bonnes_reponses": ["Req = 1/(G1 + G2) + R3"]}]
     # ============================
     # Fin du quiz
     # ============================
@@ -209,14 +291,15 @@ def afficher():
         pourcentage = (st.session_state.score / 12) * 100
         if pourcentage == 100:
             appreciation = "Excellent !"
+            st.balloons()
         elif pourcentage >= 75:
+            st.balloons()
             appreciation = "Très bien !"
         elif pourcentage >= 50:
             appreciation = "Assez bien."
         else:
             appreciation = "À retravailler."
-        st.balloons()
-        st.markdown(f"🏆 Quiz terminé !&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Score :{pourcentage:.0f} %&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {appreciation}",
+        st.markdown(f"🏆Quiz terminé !&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Score :{pourcentage:.0f} %&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {appreciation}",
         unsafe_allow_html=True)
         return
     # ============================
@@ -226,16 +309,25 @@ def afficher():
     bonnes_reponses = questions[st.session_state.question]["bonnes_reponses"]
 
     # ============================
-    # Calcul de Req
+    # Calcul de Req et de Geq
     # ============================
+    G1 = 1/R1
+    G2 = 1/R2
+    G3 = 1/R3
     if montage == "Série":
         Req = R1 + R2 + R3
     elif montage == "Parallèle":
-        Req = 1/(1/R1 + 1/R2 + 1/R3)
+        Geq = G1+G2+G3
+        Req = 1/Geq
     elif montage == "(R1 + R2) // R3":
-        Req = 1/(1/(R1+R2) + 1/R3)
+        R1_2 = R1+R2
+        G1_2 = 1/R1_2
+        Geq = G1_2+G3
+        Req = 1/Geq
     elif montage == "(R1 // R2) + R3":
-        Req = 1/(1/R1+1/R2) + R3
+        G1II2 = G1+G2
+        R1II2 = 1/G1II2
+        Req = R1II2 + R3
     # ============================
     # Affichage de Req dans le schéma
     # ============================
@@ -251,11 +343,13 @@ def afficher():
     elif montage == "(R1 // R2) + R3":
         fig = schema_mixte2(R1, R2, R3, Req_affiche)
     st.pyplot(fig)
+    plt.close(fig)
     # ====================================
     # Résultats de la question
     # ====================================
-    if (st.session_state.resultat_estimation != ""or st.session_state.resultat_formule != ""or st.session_state.resultat_calcul != ""):
-        score_question = 0
+
+    score_question = 0
+
     if st.session_state.resultat_estimation == "bonne":
         st.success("✅ Estimation : Bonne réponse")
         score_question += 1
@@ -317,10 +411,10 @@ def afficher():
     # ETAPE 2 : Choix de la formule
     # ====================================
     elif st.session_state.etape == 2:
-        propositions = {r"$R_{eq}=R_1+R_2+R_3$":"Req = R1 + R2 + R3",
-        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1}+\dfrac{1}{R_2}+\dfrac{1}{R_3}}$":"Req = 1/(1/R1 + 1/R2 + 1/R3)",
-        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1+R_2}+\dfrac{1}{R_3}}$":"Req = 1/(1/(R1+R2) + 1/R3)",
-        r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1}+\dfrac{1}{R_2}}+R_3$":"Req = 1/(1/R1 + 1/R2) + R3",}
+        propositions = {r"$R_{eq}=\dfrac{1}{\dfrac{1}{R_1+R_2}+G_3}$":"Req = 1/(1/(R1+R2) + G3)",
+        r"$R_{eq}=\dfrac{1}{G_1+G_2+G_3}$":"Req = 1/(G1+G2+G3)",
+        r"$R_{eq}=R_1+R_2+R_3$":"Req = R1 + R2 + R3",
+        r"$R_{eq}=\dfrac{1}{G_1+G_2}+R_3$":"Req = 1/(G1 + G2) + R3",}
         liste_formules = list(propositions.keys())
         reponse = st.radio(
         "Choisir la formule correcte :",
@@ -339,10 +433,7 @@ def afficher():
     # ETAPE 3 : Calcul de Req
     # ====================================
 
-    if "resultat_calcul" not in st.session_state:
-        st.session_state.resultat_calcul = ""
-
-    elif st.session_state.etape == 3 and not st.session_state.validation_calcul:
+    if st.session_state.etape == 3 and not st.session_state.validation_calcul:
 
         with st.form("form_req"):
 
@@ -393,7 +484,6 @@ def afficher():
                 st.session_state.validation_formule = False
                 st.session_state.validation_calcul = False
                 st.session_state.message_qcm = ""
-                st.session_state.resultat_calcul = ""
                 st.session_state.resultat_estimation = ""
                 st.session_state.resultat_formule = ""
                 st.session_state.resultat_calcul = ""
