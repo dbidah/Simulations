@@ -2,6 +2,7 @@ import streamlit as st
 from chute_libre import afficher as chute_libre
 from calcul_req import afficher as calcul_req
 from Loi_Ohm_CC import afficher as Loi_Ohm_CC
+from Courant_electrique import afficher as Courant_electrique
 
 st.set_page_config(page_title="Simulations Physique-Chimie",page_icon="🔬",layout="wide")
 # ==========================
@@ -80,7 +81,8 @@ elif page == "🔬 Simulations":
                 [
                     "Choisir une simulation...",
                     "⚡ Calcul Req",
-                    "⚡ Loi d'Ohm en CC"
+                    "⚡ Loi d'Ohm en CC",
+                    "⚡ Courant_electrique"
                 ]
             )
 
@@ -116,7 +118,7 @@ elif page == "🔬 Simulations":
 
     elif simulation == "⚡ Calcul Req":
         calcul_req()
-
     elif simulation == "⚡ Loi d'Ohm en CC":
         Loi_Ohm_CC()
-    
+    elif simulation == "⚡ Courant_electrique":
+            Courant_electrique()
