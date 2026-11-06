@@ -5,6 +5,65 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 
+@st.cache_resource
+def connecter_google_sheet():
+
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=scope
+    )
+
+    client = gspread.authorize(creds)
+
+    feuille = client.open(
+        "Résultats courant électrique"
+    ).sheet1
+
+    return feuille
+
+
+def enregistrer_resultat(
+    nom,
+    score_sens,
+    score_relations,
+    score_calculs,
+    score_total
+):
+
+    feuille = connecter_google_sheet()
+
+    feuille.append_row([
+        datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        nom,
+        score_sens,
+        score_relations,
+        score_calculs,
+        score_total
+    ])
+
+def enregistrer_resultat(
+    nom,
+    score_sens,
+    score_relations,
+    score_calculs,
+    score_total
+):
+    feuille = connecter_google_sheet()
+
+    feuille.append_row([
+        datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        nom,
+        score_sens,
+        score_relations,
+        score_calculs,
+        score_total
+    ])
+
 def afficher():
     nom_eleve = st.text_input("Nom et prénom de l'élève",key="nom_eleve")
     st.set_page_config(page_title="Le courant électrique",page_icon="⚡",layout="wide")
@@ -916,6 +975,42 @@ def afficher():
             score_calculs = st.session_state.get("score_calculs", 0)
             total = (score_sens+ score_relations+ score_calculs)
             pourcentage = round(total * 100 / 16,1)
+
+        # ==================================
+        # ENVOI DES RESULTATS
+        # ==================================
+
+        nom_eleve = st.text_input(
+            "Nom et prénom de l'élève"
+        )
+
+        if "resultat_envoye" not in st.session_state:
+            st.session_state.resultat_envoye = False
+
+        if not st.session_state.resultat_envoye:
+
+            if st.button("📤 Envoyer mes résultats"):
+
+                if nom_eleve.strip() == "":
+                    st.warning("⚠️ Saisissez votre nom et prénom.")
+
+                else:
+
+                    enregistrer_resultat(
+                        nom_eleve,
+                        score_sens,
+                        score_relations,
+                        score_calculs,
+                        pourcentage
+                    )
+
+                    st.session_state.resultat_envoye = True
+
+                    st.success("✅ Résultats envoyés au professeur.")
+
+        else:
+            st.success("✅ Résultats déjà envoyés.")
+
             st.markdown("---")
             st.subheader("🏆 Résultat final")
             st.metric("Score obtenu",f"{pourcentage}%")
