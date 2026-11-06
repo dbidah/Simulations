@@ -970,100 +970,144 @@ def afficher():
         # RESULTATS FINAUX
         # ==================================
         if st.session_state.simulation_terminee:
+
             score_sens = st.session_state.get("score_sens", 0)
             score_relations = st.session_state.get("score_relations", 0)
             score_calculs = st.session_state.get("score_calculs", 0)
-            total = (score_sens+ score_relations+ score_calculs)
-            pourcentage = round(total * 100 / 16,1)
 
-        # ==================================
-        # ENVOI DES RESULTATS
-        # ==================================
+            total = score_sens + score_relations + score_calculs
+            pourcentage = round(total * 100 / 16, 1)
 
-        nom_eleve = st.text_input(
-            "Nom et prénom de l'élève"
-        )
-
-        if "resultat_envoye" not in st.session_state:
-            st.session_state.resultat_envoye = False
-
-        if not st.session_state.resultat_envoye:
-
-            if st.button("📤 Envoyer mes résultats"):
-
-                if nom_eleve.strip() == "":
-                    st.warning("⚠️ Saisissez votre nom et prénom.")
-
-                else:
-
-                    enregistrer_resultat(
-                        nom_eleve,
-                        score_sens,
-                        score_relations,
-                        score_calculs,
-                        pourcentage
-                    )
-
-                    st.session_state.resultat_envoye = True
-
-                    st.success("✅ Résultats envoyés au professeur.")
-
-        else:
-            st.success("✅ Résultats déjà envoyés.")
+            # ==================================
+            # AFFICHAGE RESULTATS
+            # ==================================
 
             st.markdown("---")
             st.subheader("🏆 Résultat final")
-            st.metric("Score obtenu",f"{pourcentage}%")
-            st.write(f"Score sens : {score_sens}/7")
-            st.write(
-                f"Score relations : {score_relations}/4")
-            st.write(f"Score calculs : {score_calculs}/5")
-            st.warning("🔒 Exercice terminé. ""Les réponses ne peuvent plus être modifiées. ""Clique sur 'Nouvel exercice' pour recommencer.")
+
+            st.metric("Score obtenu", f"{pourcentage}%")
+
+            st.write(f"✅ Score sens : {score_sens}/7")
+            st.write(f"✅ Score relations : {score_relations}/4")
+            st.write(f"✅ Score calculs : {score_calculs}/5")
+
+            # ==================================
+            # ENVOI DES RESULTATS
+            # ==================================
+
+            st.markdown("---")
+
+            nom_eleve = st.text_input(
+                "Nom et prénom de l'élève"
+            )
+
+            if "resultat_envoye" not in st.session_state:
+                st.session_state.resultat_envoye = False
+
+            if not st.session_state.resultat_envoye:
+
+                if st.button("📤 Envoyer mes résultats"):
+
+                    if nom_eleve.strip() == "":
+                        st.warning("⚠️ Saisissez votre nom et prénom.")
+
+                    else:
+
+                        enregistrer_resultat(
+                            nom_eleve,
+                            score_sens,
+                            score_relations,
+                            score_calculs,
+                            pourcentage
+                        )
+
+                        st.session_state.resultat_envoye = True
+                        st.rerun()
+
+            else:
+                st.success("✅ Résultats déjà envoyés au professeur.")
+
+            # ==================================
+            # MESSAGE PEDAGOGIQUE
+            # ==================================
+
+            st.warning(
+                "🔒 Exercice terminé. "
+                "Les réponses ne peuvent plus être modifiées. "
+                "Clique sur 'Nouvel exercice' pour recommencer."
+            )
+
             if pourcentage >= 90:
                 st.success("🌟 Excellent travail !")
                 st.balloons()
+
             elif pourcentage >= 75:
                 st.success("✅ Très bon travail.")
+
             elif pourcentage >= 50:
                 st.warning("⚠️ Résultat satisfaisant.")
+
             else:
                 st.error("❌ Les lois des intensités ne sont pas encore acquises.")
-            if st.button("🔄 Nouvel exercice",key="nouvel_exercice"):
+
+            # ==================================
+            # NOUVEL EXERCICE
+            # ==================================
+
+            if st.button(
+                "🔄 Nouvel exercice",
+                key="nouvel_exercice"
+            ):
+
                 a_supprimer = [
+
                     # étapes
                     "etape",
                     "etape1_validee",
                     "etape2_validee",
                     "etape3_validee",
+
                     # simulation
                     "simulation_terminee",
                     "exercice_termine",
+
+                    # envoi résultats
+                    "resultat_envoye",
+
                     # courants
                     "sens",
+
                     # scores
                     "score_sens",
                     "score_relations",
                     "score_calculs",
+
                     # erreurs
                     "erreurs_sens",
                     "erreurs_calculs",
+
                     # données exercice
                     "I2_donnee",
                     "I4_donnee",
+
                     # relations
                     "relation1",
                     "relation2",
                     "relation3",
                     "relation4",
+
                     # calculs
                     "calc_I1",
                     "calc_I3",
                     "calc_I5",
                     "calc_I6",
-                    "calc_I7"]
+                    "calc_I7"
+                ]
+
                 for cle in a_supprimer:
                     if cle in st.session_state:
                         del st.session_state[cle]
+
                 st.session_state.page = "simulation"
                 st.rerun()
 if __name__ == "__main__":
