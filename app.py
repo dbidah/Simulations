@@ -2,7 +2,7 @@ import streamlit as st
 from chute_libre import afficher as chute_libre
 from calcul_req import afficher as calcul_req
 from Loi_Ohm_CC import afficher as Loi_Ohm_CC
-import Courant_electrique
+from Courant_electrique import afficher as Courant_electrique
 
 st.set_page_config(page_title="Simulations Physique-Chimie",page_icon="🔬",layout="wide")
 # ==========================
