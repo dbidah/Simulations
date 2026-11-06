@@ -65,7 +65,6 @@ def enregistrer_resultat(
     ])
 
 def afficher():
-    nom_eleve = st.text_input("Nom et prénom de l'élève",key="nom_eleve")
     st.set_page_config(page_title="Le courant électrique",page_icon="⚡",layout="wide")
     st.title("⚡ Le courant électrique")
     if "page" not in st.session_state:
@@ -358,13 +357,10 @@ def afficher():
     </div>
     """, unsafe_allow_html=True)
         st.markdown("""
-    ✅La somme des intensités des courants arrivant à un nœud est égale à la somme des intensités des courants partant de ce nœud.
-    """)
+    ✅La somme des intensités des courants arrivant à un nœud est égale à la somme des intensités des courants partant de ce nœud.""")
     st.markdown("---")
     if st.session_state.page == "cours":
-
         st.success("✅ Si vous avez compris, passez au QCM")
-
         if st.button("➡️ QCM", key="btn_qcm"):
             st.session_state.page = "qcm"
             st.rerun()
@@ -411,19 +407,14 @@ def afficher():
                 st.success("🎉 Félicitations ! Tu as obtenu 6/6 au QCM.")
             else:
                 st.session_state.score_qcm = 0
-                st.error(
-                    "❌ Tu n'as pas obtenu 100 %. 📘 Revois le cours puis réessaie le QCM."
-                )
+                st.error("❌ Tu n'as pas obtenu 100 %. 📘 Revois le cours puis réessaie le QCM.")
         # Accès permanent aux simulations uniquement si 6/6
         if st.session_state.get("score_qcm", 0) == 6:
-
             # st.markdown("---")
             # st.success("✅ Simulation débloquée")
-
             if st.button("🔬 Ouvrir la simulation"):
                 st.session_state.page = "simulation"
                 st.rerun()
-
     # ==================================
     # PAGE SIMULATION
     # ==================================
@@ -443,8 +434,7 @@ def afficher():
         - Choisis le sens des courants.
         - Complète les relations entre les intensités.
         - Vérifie tes réponses.
-        - Calcule les intensités manquantes.
-        """)
+        - Calcule les intensités manquantes.""")
         # ==================================
         # Génération exercice
         # ==================================
@@ -459,32 +449,24 @@ def afficher():
         # ==================================
         if "score_sens" not in st.session_state:
             st.session_state.score_sens = 0
-
         if "erreurs_sens" not in st.session_state:
             st.session_state.erreurs_sens = []
-
         if "etape1_validee" not in st.session_state:
             st.session_state.etape1_validee = False
-
         if "etape1_validee" not in st.session_state:
             st.session_state.etape1_validee = False
-
         if "etape2_validee" not in st.session_state:
             st.session_state.etape2_validee = False
-
         if "etape3_validee" not in st.session_state:
             st.session_state.etape3_validee = False
-
         if "exercice_termine" not in st.session_state:
             st.session_state.exercice_termine = False
-
         if "simulation_terminee" not in st.session_state:
             st.session_state.simulation_terminee = False
         # ==================================
         # Initialisation sens courants
         # ==================================
         if "sens" not in st.session_state:
-
             st.session_state.sens = {
                 "I1": random.choice(["droite", "gauche"]),
                 "I2": random.choice(["haut", "bas"]),
@@ -492,8 +474,7 @@ def afficher():
                 "I4": random.choice(["droite", "gauche"]),
                 "I5": random.choice(["haut", "bas"]),
                 "I6": random.choice(["haut", "bas"]),
-                "I7": random.choice(["droite", "gauche"])
-            }
+                "I7": random.choice(["droite", "gauche"])}
         # ==================================
         # Boutons choix sens
         # ==================================
@@ -502,10 +483,7 @@ def afficher():
         cols = st.columns(7)
         for i, courant in enumerate(courants):
             with cols[i]:
-                if st.button(
-                    f"↺ {courant}",
-                    disabled=st.session_state.etape1_validee
-                ):
+                if st.button(f"↺ {courant}",disabled=st.session_state.etape1_validee):
                     sens = st.session_state.sens[courant]
                     if sens == "droite":
                         st.session_state.sens[courant] = "gauche"
@@ -605,13 +583,9 @@ def afficher():
                 ax.arrow(3.5, -1, -0.5, 0,head_width=0.3,head_length=0.4,fc="blue", ec="blue")
             ax.set_xlim(-0.3, 8.3)
             ax.set_ylim(-1.6, 4.6)
-
             ax.axis("off")
-
             plt.tight_layout(pad=0)
-
             return fig
-
         # ==================================
         # Affichage schéma
         # ==================================
@@ -620,7 +594,6 @@ def afficher():
         # ==================================
         # GESTION DES ETAPES
         # ==================================
-
         if "etape" not in st.session_state:
             st.session_state.etape = 1
         if "score_sens" not in st.session_state:
@@ -630,31 +603,19 @@ def afficher():
         if "score_calculs" not in st.session_state:
             st.session_state.score_calculs = 0
         st.markdown("---")
-
         # ==================================
         # ETAPE 1
         # ==================================
-
         if "etape1_validee" not in st.session_state:
             st.session_state.etape1_validee = False
-
         if "score_sens" not in st.session_state:
             st.session_state.score_sens = 0
-
         if "erreurs_sens" not in st.session_state:
             st.session_state.erreurs_sens = []
-
         if st.session_state.etape == 1:
-
             if not st.session_state.etape1_validee:
-
-                if st.button(
-                    "✅ Valider les sens",
-                    key="valider_sens"
-                ):
-
+                if st.button("✅ Valider les sens",key="valider_sens"):
                     score_sens = 0
-
                     BON_SENS = {
                         "I1": "droite",
                         "I2": "haut",
@@ -662,49 +623,27 @@ def afficher():
                         "I4": "droite",
                         "I5": "haut",
                         "I6": "bas",
-                        "I7": "gauche",
-                    }
-
+                        "I7": "gauche",}
                     erreurs = []
-
                     for courant, sens_correct in BON_SENS.items():
-
                         if st.session_state.sens[courant] == sens_correct:
                             score_sens += 1
                         else:
                             erreurs.append(courant)
-
                     st.session_state.score_sens = score_sens
                     st.session_state.erreurs_sens = erreurs
                     st.session_state.etape1_validee = True
-
                     st.rerun()
-
             # ----------------------------
             # RESULTAT ETAPE 1
             # ----------------------------
-
             if st.session_state.etape1_validee:
-
-                st.info(
-                    f"🎯 Score sens : "
-                    f"{st.session_state.score_sens}/7"
-                )
-
+                st.info(f"🎯 Score sens : "f"{st.session_state.score_sens}/7")
                 if st.session_state.score_sens == 7:
-
-                    st.success(
-                        "✅ Bravo ! Tous les sens des courants sont corrects."
-                    )
-
+                    st.success("✅ Bravo ! Tous les sens des courants sont corrects.")
                 else:
-
-                    st.error(
-                        f"❌ {7 - st.session_state.score_sens} erreur(s)."
-                    )
-
+                    st.error(f"❌ {7 - st.session_state.score_sens} erreur(s).")
                     with st.expander("✅ Voir la correction"):
-
                         st.write("I₁ : droite")
                         st.write("I₂ : haut")
                         st.write("I₃ : bas")
@@ -712,99 +651,42 @@ def afficher():
                         st.write("I₅ : haut")
                         st.write("I₆ : bas")
                         st.write("I₇ : gauche")
-
                 st.markdown("---")
-
-                if st.button(
-                    "➡️ Passer à l'étape 2",
-                    key="passage_etape2"
-                ):
+                if st.button("➡️ Passer à l'étape 2",key="passage_etape2"):
                     st.session_state.etape = 2
                     st.rerun()
-
         # ==================================
         # ETAPE 2
         # ==================================
-
         if "etape2_validee" not in st.session_state:
             st.session_state.etape2_validee = False
-
         if "score_relations" not in st.session_state:
             st.session_state.score_relations = 0
-
         if st.session_state.etape == 2:
-
             st.subheader("✏️ Étape 2 : Relations entre les intensités")
             st.write("Compléter les relations suivantes :")
-
-            relation1 = st.text_input(
-                "Relation entre I₁, I₂ et I₃",
-                key="relation1",
-                disabled=st.session_state.etape2_validee
-            )
-
-            relation2 = st.text_input(
-                "Relation entre I₅, I₆ et I₇",
-                key="relation2",
-                disabled=st.session_state.etape2_validee
-            )
-
-            relation3 = st.text_input(
-                "Relation entre I₃, I₄ et I₆",
-                key="relation3",
-                disabled=st.session_state.etape2_validee
-            )
-
-            relation4 = st.text_input(
-                "Relation entre I₂, I₄ et I₅",
-                key="relation4",
-                disabled=st.session_state.etape2_validee
-            )
-
+            relation1 = st.text_input("Relation entre I₁, I₂ et I₃",key="relation1",disabled=st.session_state.etape2_validee)
+            relation2 = st.text_input("Relation entre I₅, I₆ et I₇",key="relation2",disabled=st.session_state.etape2_validee)
+            relation3 = st.text_input("Relation entre I₃, I₄ et I₆",key="relation3",disabled=st.session_state.etape2_validee)
+            relation4 = st.text_input("Relation entre I₂, I₄ et I₅",key="relation4",disabled=st.session_state.etape2_validee)
             # ----------------------------------
             # APERÇU DES RÉPONSES
             # ----------------------------------
-
             with st.expander("🔍 Vérifier mes saisies avant validation"):
-
-                st.write(
-                    "Relation 1 :",
-                    relation1 if relation1 else "Aucune saisie"
-                )
-
-                st.write(
-                    "Relation 2 :",
-                    relation2 if relation2 else "Aucune saisie"
-                )
-
-                st.write(
-                    "Relation 3 :",
-                    relation3 if relation3 else "Aucune saisie"
-                )
-
-                st.write(
-                    "Relation 4 :",
-                    relation4 if relation4 else "Aucune saisie"
-                )
-
+                st.write("Relation 1 :",relation1 if relation1 else "Aucune saisie")
+                st.write("Relation 2 :",relation2 if relation2 else "Aucune saisie")
+                st.write("Relation 3 :",relation3 if relation3 else "Aucune saisie")
+                st.write("Relation 4 :",relation4 if relation4 else "Aucune saisie")
             # ----------------------------------
             # VALIDATION
             # ----------------------------------
-
             if not st.session_state.etape2_validee:
-
-                if st.button(
-                    "✅ Valider les relations",
-                    key="valider_relations"
-                ):
-
+                if st.button("✅ Valider les relations",key="valider_relations"):
                     score = 0
-
                     r1 = relation1.upper().replace(" ", "")
                     r2 = relation2.upper().replace(" ", "")
                     r3 = relation3.upper().replace(" ", "")
                     r4 = relation4.upper().replace(" ", "")
-
                     if r1 in [
                         "I1=I2=I3",
                         "I1=I3=I2",
@@ -814,7 +696,6 @@ def afficher():
                         "I3=I2=I1",
                     ]:
                         score += 1
-
                     if r2 in [
                         "I5=I6=I7",
                         "I5=I7=I6",
@@ -824,7 +705,6 @@ def afficher():
                         "I7=I6=I5",
                     ]:
                         score += 1
-
                     if r3 in [
                         "I3+I4=I6",
                         "I4+I3=I6",
@@ -832,59 +712,33 @@ def afficher():
                         "I6=I4+I3",
                     ]:
                         score += 1
-
                     if r4 in [
                         "I2+I4=I5",
                         "I4+I2=I5",
                         "I5=I2+I4",
-                        "I5=I4+I2",
-                    ]:
+                        "I5=I4+I2",]:
                         score += 1
-
                     st.session_state.score_relations = score
                     st.session_state.etape2_validee = True
-
                     st.rerun()
-
             # ----------------------------------
             # RESULTATS
             # ----------------------------------
-
             if st.session_state.etape2_validee:
-
                 score = st.session_state.score_relations
-
-                st.info(
-                    f"🎯 Score relations : {score}/4"
-                )
-
+                st.info(f"🎯 Score relations : {score}/4")
                 if score == 4:
-
-                    st.success(
-                        "✅ Bravo ! Toutes les relations sont correctes."
-                    )
-
+                    st.success("✅ Bravo ! Toutes les relations sont correctes.")
                 else:
-
-                    st.error(
-                        f"❌ {4 - score} relation(s) incorrecte(s)."
-                    )
-
+                    st.error(f"❌ {4 - score} relation(s) incorrecte(s).")
                     st.markdown("### ✅ Correction")
-
                     st.markdown("""
         - **I1 = I2 = I3**
         - **I5 = I6 = I7**
         - **I3 + I4 = I6**
-        - **I2 + I4 = I5**
-        """)
-
+        - **I2 + I4 = I5**""")
                 st.markdown("---")
-
-                if st.button(
-                    "➡️ Passer à l'étape 3",
-                    key="vers_etape3"
-                ):
+                if st.button("➡️ Passer à l'étape 3",key="vers_etape3"):
                     st.session_state.etape = 3
                     st.rerun()
         # ==================================
@@ -970,144 +824,93 @@ def afficher():
         # RESULTATS FINAUX
         # ==================================
         if st.session_state.simulation_terminee:
-
             score_sens = st.session_state.get("score_sens", 0)
             score_relations = st.session_state.get("score_relations", 0)
             score_calculs = st.session_state.get("score_calculs", 0)
-
             total = score_sens + score_relations + score_calculs
             pourcentage = round(total * 100 / 16, 1)
-
             # ==================================
             # AFFICHAGE RESULTATS
             # ==================================
-
             st.markdown("---")
             st.subheader("🏆 Résultat final")
-
             st.metric("Score obtenu", f"{pourcentage}%")
-
             st.write(f"✅ Score sens : {score_sens}/7")
             st.write(f"✅ Score relations : {score_relations}/4")
             st.write(f"✅ Score calculs : {score_calculs}/5")
-
             # ==================================
             # ENVOI DES RESULTATS
             # ==================================
-
             st.markdown("---")
-
-            nom_eleve = st.text_input(
-                "Nom et prénom de l'élève"
-            )
+            nom_eleve = st.text_input("🧑 Nom et prénom de l'élève")
 
             if "resultat_envoye" not in st.session_state:
                 st.session_state.resultat_envoye = False
-
             if not st.session_state.resultat_envoye:
-
                 if st.button("📤 Envoyer mes résultats"):
-
                     if nom_eleve.strip() == "":
                         st.warning("⚠️ Saisissez votre nom et prénom.")
-
                     else:
-
-                        enregistrer_resultat(
-                            nom_eleve,
-                            score_sens,
-                            score_relations,
-                            score_calculs,
-                            pourcentage
-                        )
-
+                        enregistrer_resultat(nom_eleve,score_sens,score_relations,score_calculs,pourcentage)
                         st.session_state.resultat_envoye = True
                         st.rerun()
-
             else:
                 st.success("✅ Résultats déjà envoyés au professeur.")
-
             # ==================================
             # MESSAGE PEDAGOGIQUE
             # ==================================
-
             st.warning(
-                "🔒 Exercice terminé. "
-                "Les réponses ne peuvent plus être modifiées. "
-                "Clique sur 'Nouvel exercice' pour recommencer."
-            )
-
+                "🔒 Exercice terminé. ""Les réponses ne peuvent plus être modifiées. ""Clique sur 'Nouvel exercice' pour recommencer.")
             if pourcentage >= 90:
                 st.success("🌟 Excellent travail !")
                 st.balloons()
-
             elif pourcentage >= 75:
                 st.success("✅ Très bon travail.")
-
             elif pourcentage >= 50:
                 st.warning("⚠️ Résultat satisfaisant.")
-
             else:
                 st.error("❌ Les lois des intensités ne sont pas encore acquises.")
-
             # ==================================
             # NOUVEL EXERCICE
             # ==================================
-
-            if st.button(
-                "🔄 Nouvel exercice",
-                key="nouvel_exercice"
-            ):
-
+            if st.button("🔄 Nouvel exercice",key="nouvel_exercice"):
                 a_supprimer = [
-
                     # étapes
                     "etape",
                     "etape1_validee",
                     "etape2_validee",
                     "etape3_validee",
-
                     # simulation
                     "simulation_terminee",
                     "exercice_termine",
-
                     # envoi résultats
                     "resultat_envoye",
-
                     # courants
                     "sens",
-
                     # scores
                     "score_sens",
                     "score_relations",
                     "score_calculs",
-
                     # erreurs
                     "erreurs_sens",
                     "erreurs_calculs",
-
                     # données exercice
                     "I2_donnee",
                     "I4_donnee",
-
                     # relations
                     "relation1",
                     "relation2",
                     "relation3",
                     "relation4",
-
                     # calculs
                     "calc_I1",
                     "calc_I3",
                     "calc_I5",
                     "calc_I6",
-                    "calc_I7"
-                ]
-
+                    "calc_I7"]
                 for cle in a_supprimer:
                     if cle in st.session_state:
                         del st.session_state[cle]
-
                 st.session_state.page = "simulation"
                 st.rerun()
 if __name__ == "__main__":
