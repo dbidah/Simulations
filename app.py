@@ -3,13 +3,18 @@ from chute_libre import afficher as chute_libre
 from calcul_req import afficher as calcul_req
 from Loi_Ohm_CC import afficher as Loi_Ohm_CC
 from Courant_electrique import afficher as Courant_electrique
-
 st.set_page_config(page_title="Simulations Physique-Chimie",page_icon="🔬",layout="wide")
 # ==========================
 # Navigation
 # ==========================
 st.sidebar.title("📚 Navigation")
-page = st.sidebar.radio("",["👨‍🏫 Parcours & Travaux","🔬 Simulations"])
+params = st.query_params
+if "page" in params:
+    page = params["page"]
+else:
+    page = "🔬 Simulations"
+page = st.sidebar.radio("",["👨‍🏫 Parcours & Travaux","🔬 Simulations"],index=0 if page=="👨‍🏫 Parcours & Travaux" else 1)
+
 # ==========================
 # ACCUEIL
 # ==========================
