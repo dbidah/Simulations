@@ -9,11 +9,19 @@ st.set_page_config(page_title="Simulations Physique-Chimie",page_icon="🔬",lay
 # ==========================
 st.sidebar.title("📚 Navigation")
 params = st.query_params
-if "page" in params:
-    page = params["page"]
+
+page_url = params.get("page", "simulations")
+
+if page_url == "publications":
+    default_index = 0
 else:
-    page = "🔬 Simulations"
-page = st.sidebar.radio("",["👨‍🏫 Parcours & Travaux","🔬 Simulations"],index=0 if page=="👨‍🏫 Parcours & Travaux" else 1)
+    default_index = 1
+
+page = st.sidebar.radio(
+    "",
+    ["👨‍🏫 Parcours & Travaux", "🔬 Simulations"],
+    index=default_index
+)
 
 # ==========================
 # ACCUEIL
